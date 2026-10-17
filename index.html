@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Links</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+ /* ===== UPGRADE: fonts and polish ===== */
+body { font-family: "Poppins", system-ui, sans-serif; }
+
+h1 {
+  font-family: "Orbitron", "Poppins", sans-serif;
+  font-size: 1.5rem; font-weight: 800;
+  letter-spacing: .08em; text-transform: uppercase;
+  background: linear-gradient(90deg, #ffffff, #bfe9ff 50%, #ffc2e8);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent; text-shadow: none;
+  filter: drop-shadow(0 2px 10px rgba(0,0,0,.55));
+}
+
+.tagline {
+  font-family: "Orbitron", "Poppins", sans-serif;
+  font-size: .72rem; font-weight: 600; letter-spacing: .3em;
+}
+
+.bio { font-weight: 400; font-size: .9rem; }
+
+.section-title {
+  font-family: "Orbitron", "Poppins", sans-serif;
+  font-size: .7rem; letter-spacing: .3em;
+  display: flex; align-items: center; gap: 12px;
+}
+.section-title::after {
+  content: ""; flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(255,255,255,.6), transparent);
+}
+
+.link { position: relative; padding-right: 48px; }
+.link strong { font-weight: 600; font-size: .95rem; }
+.link span { font-weight: 400; }
+.link::after {
+  content: "\2192";
+  position: absolute; right: 20px; top: 50%;
+  transform: translateY(-50%);
+  opacity: .6; transition: transform .15s ease, opacity .15s ease;
+}
+.link:hover::after { transform: translate(4px, -50%); opacity: 1; }
+.link.primary { padding-right: 20px; }
+.link.primary::after { display: none; }
+.link.primary strong { font-family: "Orbitron", "Poppins", sans-serif; letter-spacing: .12em; }
+
+footer { font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; opacity: .85; }
+
+/* fade-in when the page loads */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+.avatar, h1, .tagline, .bio, .section-title, .link, footer {
+  animation: rise .6s ease backwards;
+}
+.link:nth-child(2) { animation-delay: .05s; }
+.link:nth-child(3) { animation-delay: .10s; }
+.link:nth-child(4) { animation-delay: .15s; }
+.link:nth-child(5) { animation-delay: .20s; }
+.link:nth-child(6) { animation-delay: .25s; }
+.link:nth-child(7) { animation-delay: .30s; }
+.link:nth-child(8) { animation-delay: .35s; }
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; }
+}
+
+/* =====================================================================
+   PART 2 OF 3: LOOK AND FEEL (optional to edit)
+   Only change the COLORS block unless you know CSS.
+   ===================================================================== */
+
+/* ---------- COLORS: safe to edit ---------- */
+:root {
+  --bg: url("bg.jpg") center/cover fixed;
+ /* ---------- COLORS: safe to edit ---------- */
+:root {
+  --card: rgba(22, 14, 52, .42);
+  --card-hover: rgba(40, 26, 88, .55);
+  --border: rgba(255, 255, 255, .30);
+  --text: #ffffff;
+  --muted: rgba(255, 255, 255, .78);
+  --accent-a: #ff8fd0;
+  --accent-b: #7a6cff;
+  --glow: #8fd8ff;
+  --shade-top: rgba(12, 8, 40, .30);
+  --shade-bottom: rgba(12, 8, 40, .65);
+}
+
+/* ---------- LAYOUT: you can leave this alone ---------- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: #1a1440;
+  color: var(--text);
+  min-height: 100vh; display: flex; justify-content: center;
+  padding: 48px 16px; line-height: 1.4;
+}
+
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1;
+  background:
+    linear-gradient(var(--shade-top), var(--shade-bottom)),
+    url("bg.jpg") center / cover no-repeat;
+}
+
+main { width: 100%; max-width: 440px; text-align: center; }
+
+.avatar {
+  width: 112px; height: 112px; border-radius: 50%; object-fit: cover;
+  border: 3px solid rgba(255,255,255,.85);
+  box-shadow: 0 0 0 6px rgba(143,216,255,.18), 0 10px 30px rgba(0,0,0,.45);
+  background: var(--card); margin-bottom: 16px;
+}
+
+h1 {
+  font-size: 1.55rem; font-weight: 800; letter-spacing: .04em;
+  text-shadow: 0 2px 12px rgba(0,0,0,.65);
+}
+.tagline {
+  color: var(--muted); margin-top: 6px; font-size: .9rem;
+  letter-spacing: .18em; text-shadow: 0 2px 8px rgba(0,0,0,.7);
+}
+.bio {
+  color: var(--muted); margin: 14px auto 0; font-size: .95rem; max-width: 36ch;
+  text-shadow: 0 2px 8px rgba(0,0,0,.7);
+}
+
+.links { margin-top: 32px; display: flex; flex-direction: column; gap: 12px; }
+
+.section-title {
+  margin: 22px 0 -2px; font-size: .75rem; font-weight: 700;
+  letter-spacing: .18em; text-transform: uppercase; text-align: left;
+  color: var(--text); text-shadow: 0 2px 8px rgba(0,0,0,.8);
+}
+
+.link {
+  display: block; text-decoration: none; color: var(--text);
+  background: var(--card);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 16px 20px; text-align: left;
+  box-shadow: 0 8px 28px rgba(0,0,0,.35);
+  transition: transform .15s ease, background .15s ease,
+              border-color .15s ease, box-shadow .15s ease;
+}
+.link:hover, .link:focus-visible {
+  transform: translateY(-3px);
+  background: var(--card-hover);
+  border-color: var(--glow);
+  box-shadow: 0 10px 32px rgba(0,0,0,.4), 0 0 18px rgba(143,216,255,.45);
+  outline: none;
+}
+.link strong { display: block; font-size: 1rem; letter-spacing: .04em; }
+.link span { display: block; color: var(--muted); font-size: .82rem; margin-top: 2px; }
+
+.link.primary {
+  background: linear-gradient(120deg, var(--accent-a), var(--accent-b));
+  border-color: rgba(255,255,255,.55);
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(122,108,255,.45);
+}
+.link.primary:hover, .link.primary:focus-visible {
+  background: linear-gradient(120deg, var(--accent-a), var(--accent-b));
+  filter: brightness(1.1);
+  border-color: #fff;
+}
+.link.primary span { color: inherit; opacity: .9; }
+
+footer {
+  margin-top: 36px; font-size: .78rem; letter-spacing: .1em;
+  color: var(--muted); text-shadow: 0 2px 8px rgba(0,0,0,.8);
+}
+
+
+/* ---------- LAYOUT: you can leave this alone ---------- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg); color: var(--text);
+  min-height: 100vh; display: flex; justify-content: center;
+  padding: 48px 16px; line-height: 1.4;
+}
+main { width: 100%; max-width: 440px; text-align: center; }
+.avatar {
+  width: 112px; height: 112px; border-radius: 50%; object-fit: cover;
+  border: 3px solid var(--accent); background: var(--card); margin-bottom: 16px;
+}
+h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em; }
+.tagline { color: var(--muted); margin-top: 4px; }
+.bio { color: var(--muted); margin: 14px auto 0; font-size: .95rem; max-width: 34ch; }
+.links { margin-top: 32px; display: flex; flex-direction: column; gap: 12px; }
+.section-title {
+  margin: 22px 0 -2px; font-size: .75rem; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--muted); text-align: left;
+}
+.link {
+  display: block; text-decoration: none; color: var(--text);
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 14px 18px; text-align: left;
+  transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+}
+.link:hover, .link:focus-visible {
+  transform: translateY(-2px); border-color: var(--accent);
+  box-shadow: 0 6px 18px rgba(0,0,0,.08); outline: none;
+}
+.link strong { display: block; font-size: 1rem; }
+.link span { display: block; color: var(--muted); font-size: .85rem; margin-top: 2px; }
+.link.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); text-align: center; }
+.link.primary span { color: inherit; opacity: .85; }
+footer { margin-top: 36px; color: var(--muted); font-size: .8rem; }
+</style>
+</head>
+
+<body>
+<main id="app"></main>
+
+<script>
+/* =====================================================================
+   PART 1 OF 3: YOUR CONTENT  <<< EDIT THIS PART
+   Everything you normally want to change is right here.
+   ===================================================================== */
+
+const CONFIG = {
+
+  // ----- Page info -----
+  pageTitle: "ACADEMIC AND RESEARCH BAND LINKS",   // text on the browser tab
+  name:      "RADIO ENGINEERING CIRCLE",
+  tagline:   "ACADEMIC AND RESEARCH BAND",
+  bio:       "This page is dedicated solely for organizational work",   // set to "" to hide
+  avatar:    "avatar.png",          // your logo/photo file; set to "" to hide
+  footerName: "2027 RADIO ENGINEERING CIRCLE",          // set to "" to hide the footer
+
+  // ----- Buttons -----
+  // Each group has a heading ("title") and a list of links.
+  // - To HIDE a link or group:    set  show: false   (or delete it)
+  // - To ADD a link:              copy one line and change it
+  // - To make a button stand out: add  primary: true
+  groups: [
+
+    {
+      title: "",                    // "" = no heading
+      links: [
+        { label: "Leaderboard", note: "spreadsheet link", url: "https://docs.google.com/spreadsheets/d/1VRIOXPtysbKZPeQSMcz1xXxmaXlZhHR1CFLTUHc0vD0/edit?usp=drive_link", primary: true, show: true },
+      ]
+    },
+
+    {
+      title: "Directories",
+      links: [
+        { label: "ANNOUNCEMENTS",   note: "gdocs link",     url: "",      show: true },
+        { label: "WORKING DOCS FILE",  note: "gdocs link",   url: "",   show: true },
+        { label: "GOOGLE DRIVE",     note: "gdrive link",   url: "",     show: true },
+        { label: "SUBMISSION BIN",    note: "spreadsheet link",  url: "",   show: true },
+        { label: "TASK TRACKER",note: "spreadsheet link",   url: "",           show: true },  // hidden
+        { label: "RESOURCES",   note: "gdocs link",  url: "",   show: true },  // hidden
+      ]
+    },
+
+    {
+      title: "Contact",
+      links: [
+        { label: "Facebook", note: "Carl Delgado", url: "https://www.facebook.com/carl.delgado.739978", show: true },
+      ]
+    },
+
+  ]
+};
+
+
+/* =====================================================================
+   PART 3 OF 3: PAGE BUILDER  <<< DON'T TOUCH
+   This reads CONFIG above and builds the page. No need to edit it.
+   ===================================================================== */
+
+(function () {
+  const esc = s => String(s).replace(/[&<>"']/g, c =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  document.title = CONFIG.pageTitle;
+
+  let html = "";
+  if (CONFIG.avatar) {
+    html += `<img class="avatar" src="${esc(CONFIG.avatar)}" alt="${esc(CONFIG.name)}" onerror="this.style.display='none'">`;
+  }
+  html += `<h1>${esc(CONFIG.name)}</h1>`;
+  if (CONFIG.tagline) html += `<p class="tagline">${esc(CONFIG.tagline)}</p>`;
+  if (CONFIG.bio)     html += `<p class="bio">${esc(CONFIG.bio)}</p>`;
+
+  html += `<div class="links">`;
+  CONFIG.groups.forEach(g => {
+    const visible = (g.links || []).filter(l => l.show !== false);
+    if (!visible.length) return;
+    if (g.title) html += `<p class="section-title">${esc(g.title)}</p>`;
+    visible.forEach(l => {
+      const external = /^https?:/i.test(l.url) ? ' target="_blank" rel="noopener"' : "";
+      html += `<a class="link${l.primary ? " primary" : ""}" href="${esc(l.url)}"${external}>` +
+              `<strong>${esc(l.label)}</strong>` +
+              (l.note ? `<span>${esc(l.note)}</span>` : "") +
+              `</a>`;
+    });
+  });
+  html += `</div>`;
+
+  if (CONFIG.footerName) {
+    html += `<footer>&copy; ${new Date().getFullYear()} ${esc(CONFIG.footerName)}</footer>`;
+  }
+
+  document.getElementById("app").innerHTML = html;
+})();
+</script>
+</body>
+</html>
