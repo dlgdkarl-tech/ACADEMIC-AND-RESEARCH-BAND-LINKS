@@ -191,7 +191,7 @@ const CONFIG = {
   tagline:   "ACADEMIC AND RESEARCH BAND",
   bio:       "This page is dedicated solely for organizational work",   // "" to hide
   avatar:    "avatar.png",          // your logo/photo file; "" to hide
-  footerName: "2027 RADIO ENGINEERING CIRCLE",   // "" to hide the footer
+  footerName: "&copy; 2026 2027 RADIO ENGINEERING CIRCLE",   // shown exactly as typed; "" to hide the footer
 
   // ----- Buttons -----
   // - To HIDE a link or group:    set  show: false   (or delete it)
@@ -264,7 +264,7 @@ const CONFIG = {
   html += `</div>`;
 
   if (CONFIG.footerName) {
-    html += `<footer>&copy; ${new Date().getFullYear()} ${esc(CONFIG.footerName)}</footer>`;
+    html += `<footer>${CONFIG.footerName}</footer>`;
   }
 
   document.getElementById("app").innerHTML = html;
