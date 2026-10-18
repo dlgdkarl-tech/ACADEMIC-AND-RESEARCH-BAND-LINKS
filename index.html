@@ -158,7 +158,9 @@ h1 {
 .link.back strong { font-size: .85rem; }
 
 /* Music button (bottom-right corner) */
-.audio-ctl { position: fixed; right: 16px; bottom: 16px; z-index: 10; display: flex; align-items: center; gap: 8px; }
+.audio-ctl { position: fixed; right: 16px; bottom: 16px; z-index: 10; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.audio-row { display: flex; align-items: center; gap: 8px; }
+.vol-box .vol-lab { font-family: "Silkscreen", sans-serif; font-size: .55rem; letter-spacing: .08em; color: var(--gold-light); margin-right: 8px; text-shadow: 1px 1px 0 rgba(0, 0, 0, .8); }
 .share-btn { position: fixed; right: 16px; top: 14px; z-index: 10; }
 .vol-box {
   display: flex; align-items: center; padding: 0 12px; height: 40px;
@@ -664,6 +666,13 @@ const CONFIG = {
 
   let muted = false;   // set when the visitor turns sound off with the button
 
+  // Shared corner panel that holds the music and sound-effect controls
+  function getAudioCtl() {
+    let c = document.querySelector(".audio-ctl");
+    if (!c) { c = document.createElement("div"); c.className = "audio-ctl"; document.body.appendChild(c); }
+    return c;
+  }
+
   // ----- Background music -----
   // Plays on every page. Browsers block sound until the visitor interacts,
   // so it starts on the first tap/click anywhere, and keeps playing across pages.
@@ -709,10 +718,12 @@ const CONFIG = {
       try { localStorage.setItem("music-volume", audio.volume); } catch (e) {}
     });
     paint();
-    const box = document.createElement("div"); box.className = "vol-box"; box.appendChild(vol);
-    const ctl = document.createElement("div"); ctl.className = "audio-ctl";
-    ctl.append(box, btn);
-    document.body.appendChild(ctl);
+    const box = document.createElement("div"); box.className = "vol-box";
+    const lab = document.createElement("span"); lab.className = "vol-lab"; lab.textContent = "MUSIC";
+    box.append(lab, vol);
+    const row = document.createElement("div"); row.className = "audio-row"; row.append(box, btn);
+    const ctl = getAudioCtl();
+    ctl.prepend(row);
     // Try to play immediately. If the browser blocks it, show a "tap to enter" screen:
     // that one tap lets the music start, and it keeps playing on every page.
     const showGate = () => {
@@ -733,8 +744,12 @@ const CONFIG = {
     const AC = window.AudioContext || window.webkitAudioContext;
     let ctx = null;
     const getCtx = () => { if (!ctx && AC) { try { ctx = new AC(); } catch (e) {} } return ctx; };
-    const bufs = {}, tags = {};   // decoded sounds, and plain <audio> fallbacks
-    const SFX_GAIN = Math.min(4, Math.max(0.1, +CONFIG.sfxVolume || 2.5));
+    const bufs = {}, tags = {}, broken = {};   // decoded sounds, plain <audio> fallbacks, and files that could not be loaded
+    let sfxOn = true;   // SFX on/off button (remembered per visitor)
+    try { if (localStorage.getItem("sfx-on") === "0") sfxOn = false; } catch (e) {}
+    const SFX_MAX = 4;   // slider at 100% = 4x loudness
+    let sfxGain = Math.min(SFX_MAX, Math.max(0, CONFIG.sfxVolume === 0 ? 0 : (+CONFIG.sfxVolume || 2.5)));
+    try { const s = localStorage.getItem("sfx-volume"); if (s !== null && s !== "" && !isNaN(s)) sfxGain = Math.min(1, Math.max(0, +s)) * SFX_MAX; } catch (e) {}
     let limiter = null;           // keeps a boosted sound from crackling
     const out = () => {
       const c = getCtx();
@@ -762,17 +777,17 @@ const CONFIG = {
     // Load each sound file once, ahead of time, so it plays instantly when tapped
     const preload = src => {
       if (!src || bufs[src] || tags[src]) return;
-      tags[src] = { i: 0, list: [0, 1, 2].map(() => { const a = new Audio(src); a.preload = "auto"; a.setAttribute("playsinline", ""); return a; }) };   // fallback if decoding is not possible
+      tags[src] = { i: 0, list: [0, 1, 2].map(() => { const a = new Audio(src); a.preload = "auto"; a.setAttribute("playsinline", ""); a.addEventListener("error", () => { if (!bufs[src]) { broken[src] = true; try { console.warn("Sound file not found or unreadable:", src); } catch (e) {} } }); return a; }) };   // fallback if decoding is not possible
       const c = getCtx();
       if (!c || !window.fetch) return;
-      fetch(src).then(r => { if (!r.ok) throw 0; return r.arrayBuffer(); }).then(ab => new Promise((ok, no) => {
+      fetch(src).then(r => { if (!r.ok) { broken[src] = true; throw 0; } return r.arrayBuffer(); }).then(ab => new Promise((ok, no) => {
         const p = c.decodeAudioData(ab, ok, no); if (p && p.then) p.then(ok, no);   // old Safari uses the callback form
       })).then(b => { bufs[src] = b; }).catch(() => {});
     };
     preload(CONFIG.clickSound); preload(CONFIG.hoverSound);
 
     const blip = (freq, dur, vol) => {
-      if (muted) return;
+      if (muted || !sfxOn || sfxGain <= 0.01) return;
       try {
         const c = getCtx(); if (!c) return;
         if (c.state !== "running") c.resume().catch(() => {});
@@ -780,27 +795,56 @@ const CONFIG = {
         o.type = "square";                       // retro 8-bit sound
         o.frequency.setValueAtTime(freq, c.currentTime);
         o.frequency.exponentialRampToValueAtTime(freq * 1.5, c.currentTime + dur);
-        g.gain.setValueAtTime(Math.min(1, vol * SFX_GAIN * 2), c.currentTime);
+        g.gain.setValueAtTime(Math.min(1, vol * sfxGain * 2), c.currentTime);
         g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + dur);
         o.connect(g); g.connect(out());
         o.start(); o.stop(c.currentTime + dur);
       } catch (e) {}
     };
     const play = (src, fallbackBlip) => {
-      if (muted) return;
+      if (muted || !sfxOn || sfxGain <= 0.01) return;
       const c = getCtx();
       if (c && bufs[src]) {
         try {
           if (c.state !== "running") c.resume().catch(() => {});
           const s = c.createBufferSource(), g = c.createGain();
-          s.buffer = bufs[src]; g.gain.value = SFX_GAIN; s.connect(g); g.connect(out()); s.start(0);
+          s.buffer = bufs[src]; g.gain.value = sfxGain; s.connect(g); g.connect(out()); s.start(0);
           return;
         } catch (e) {}
       }
       const t = tags[src];
-      if (t) { try { const a = t.list[t.i++ % t.list.length]; a.pause(); a.currentTime = 0; a.volume = 1; a.play().catch(() => { if (fallbackBlip) fallbackBlip(); }); return; } catch (e) {} }
+      if (t) { try { const a = t.list[t.i++ % t.list.length]; a.pause(); a.currentTime = 0; a.volume = Math.min(1, sfxGain); a.play().catch(() => { if (fallbackBlip) fallbackBlip(); }); return; } catch (e) {} }
       if (fallbackBlip) fallbackBlip();
     };
+    // Sound-effects volume slider (remembers the visitor's setting)
+    {
+      const sv = document.createElement("input");
+      sv.type = "range"; sv.min = 0; sv.max = 100; sv.step = 1; sv.className = "vol";
+      sv.setAttribute("aria-label", "Sound effects volume"); sv.title = "Sound effects volume";
+      sv.value = Math.round(sfxGain / SFX_MAX * 100);
+      const paintS = () => sv.style.setProperty("--v", sv.value + "%");
+      sv.addEventListener("input", () => {
+        sfxGain = sv.value / 100 * SFX_MAX; paintS();
+        try { localStorage.setItem("sfx-volume", sv.value / 100); } catch (e) {}
+      });
+      // let go of the slider = play a sample so the visitor hears the new level
+      sv.addEventListener("change", () => { if (CONFIG.clickSound) play(CONFIG.clickSound, null); else blip(880, 0.1, 0.06); });
+      paintS();
+      const sbox = document.createElement("div"); sbox.className = "vol-box";
+      const sl = document.createElement("span"); sl.className = "vol-lab"; sl.textContent = "SFX";
+      sbox.append(sl, sv);
+      const sbtn = document.createElement("button");
+      sbtn.type = "button"; sbtn.className = "music-btn";
+      const paintB = () => { sbtn.textContent = sfxOn ? "\u266A SFX: On" : "\u266A SFX: Off"; sbtn.classList.toggle("on", sfxOn); };
+      sbtn.addEventListener("click", e => {
+        e.stopPropagation(); sfxOn = !sfxOn; paintB();
+        try { localStorage.setItem("sfx-on", sfxOn ? "1" : "0"); } catch (err) {}
+        if (sfxOn) { if (CONFIG.clickSound && !broken[CONFIG.clickSound]) play(CONFIG.clickSound, null); else blip(880, 0.1, 0.06); }
+      });
+      paintB();
+      const srow = document.createElement("div"); srow.className = "audio-row"; srow.append(sbox, sbtn);
+      getAudioCtl().appendChild(srow);
+    }
     let lastHover = null;
     document.addEventListener("pointerover", e => {
       const el = e.target.closest && e.target.closest(".link");
@@ -814,7 +858,9 @@ const CONFIG = {
       const el = e.target.closest && e.target.closest(".link, .music-btn");
       if (!el) return;
       const beep = () => el.classList.contains("back") ? blip(330, 0.12, 0.06) : blip(880, 0.1, 0.06);
-      if (CONFIG.clickSound) play(CONFIG.clickSound, CONFIG.beepFallback ? beep : null);   // your own click file
+      // your own click file; if that file is missing from the site, play the built-in beep so buttons still give feedback
+      if (CONFIG.clickSound && !broken[CONFIG.clickSound]) play(CONFIG.clickSound, CONFIG.beepFallback ? beep : null);
+      else if (sfxOn && sfxGain > 0.01) beep();
       else beep();
     });
   }
