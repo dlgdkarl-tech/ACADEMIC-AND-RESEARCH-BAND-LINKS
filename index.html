@@ -350,6 +350,7 @@ const CONFIG = {
   music:     "music.mp3",           // background music file (same folder); "" to turn music off
   enterScreen: true,                // show a "tap to enter" screen if the browser blocks autoplay, so music starts right away
   sfx:       true,                  // click/hover sound effects; false to turn all of them off
+  beepFallback: false,              // false = if click.mp3 can't play, stay silent instead of the retro beep; true = beep
   sfxVolume: 2.5,                   // click sound loudness: 1 = normal, 2 = twice as loud, up to 4. Raise it if phones are too quiet
   musicVolume: 0.8,                 // starting music volume, 0 to 1 (visitors can change it with the slider)
   clickSound: "click.mp3",          // YOUR click sound file (same folder); "" = use the built-in beep
@@ -370,8 +371,8 @@ const CONFIG = {
   // link = optional Teams (or Zoom/Meet) meeting link. It shows a "Join" button and goes inside the calendar entry.
   // duration = length in minutes (default 60).
   // The sample events below are placeholders: replace them with your real ones.
-  countdown: false,           // countdown timer is turned off (set to true to bring it back)
-  pauseButton: false,
+  countdown: true,
+  pauseButton: false,         // no "Pause timer" button
   eventsOnHome: true,         // show the next events on the home page; false = only on the Events page
   eventsPosition: "top",      // "top" or "bottom" of the home page buttons
   homeMoreEvents: 0,          // extra events listed under the next one on the home page (0 = only the next event, the rest are on the Events page)
@@ -753,7 +754,7 @@ const CONFIG = {
         if (c.state !== "running") c.resume().catch(() => {});
         try { const s = c.createBufferSource(); s.buffer = c.createBuffer(1, 1, 22050); s.connect(c.destination); s.start(0); } catch (e) {}
       }
-      Object.keys(tags).forEach(k => { const a = tags[k]; a.muted = true; a.play().then(() => { a.pause(); a.currentTime = 0; a.muted = false; }).catch(() => { a.muted = false; }); });
+      Object.keys(tags).forEach(k => tags[k].list.forEach(a => { a.muted = true; a.play().then(() => { a.pause(); a.currentTime = 0; a.muted = false; }).catch(() => { a.muted = false; }); }));
       if (c && c.state === "running") ["pointerdown", "touchstart", "touchend", "click", "keydown"].forEach(t => document.removeEventListener(t, unlock, true));
     };
     ["pointerdown", "touchstart", "touchend", "click", "keydown"].forEach(t => document.addEventListener(t, unlock, true));
@@ -761,7 +762,7 @@ const CONFIG = {
     // Load each sound file once, ahead of time, so it plays instantly when tapped
     const preload = src => {
       if (!src || bufs[src] || tags[src]) return;
-      const a = new Audio(src); a.preload = "auto"; tags[src] = a;   // fallback if decoding is not possible
+      tags[src] = { i: 0, list: [0, 1, 2].map(() => { const a = new Audio(src); a.preload = "auto"; a.setAttribute("playsinline", ""); return a; }) };   // fallback if decoding is not possible
       const c = getCtx();
       if (!c || !window.fetch) return;
       fetch(src).then(r => { if (!r.ok) throw 0; return r.arrayBuffer(); }).then(ab => new Promise((ok, no) => {
@@ -797,7 +798,7 @@ const CONFIG = {
         } catch (e) {}
       }
       const t = tags[src];
-      if (t) { try { const a = t.cloneNode(); a.volume = 1; a.play().catch(() => { if (fallbackBlip) fallbackBlip(); }); return; } catch (e) {} }
+      if (t) { try { const a = t.list[t.i++ % t.list.length]; a.pause(); a.currentTime = 0; a.volume = 1; a.play().catch(() => { if (fallbackBlip) fallbackBlip(); }); return; } catch (e) {} }
       if (fallbackBlip) fallbackBlip();
     };
     let lastHover = null;
@@ -813,7 +814,7 @@ const CONFIG = {
       const el = e.target.closest && e.target.closest(".link, .music-btn");
       if (!el) return;
       const beep = () => el.classList.contains("back") ? blip(330, 0.12, 0.06) : blip(880, 0.1, 0.06);
-      if (CONFIG.clickSound) play(CONFIG.clickSound, beep);   // your own click file (built-in beep if it can't play)
+      if (CONFIG.clickSound) play(CONFIG.clickSound, CONFIG.beepFallback ? beep : null);   // your own click file
       else beep();
     });
   }
