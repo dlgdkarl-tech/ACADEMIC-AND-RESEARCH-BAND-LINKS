@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Links</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=VT323&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* =====================================================================
+   PART 2 OF 3: LOOK AND FEEL (optional to edit)
+   Needs a background picture named bg.jpg in the same folder.
+   ===================================================================== */
+
+/* ---------- COLORS: safe to edit ---------- */
+:root {
+  --text: #ffffff;
+  --muted: rgba(255, 245, 230, .92);
+  --card: rgba(30, 18, 12, .70);          /* box fill */
+  --card-hover: rgba(52, 30, 18, .82);    /* box fill when hovered */
+  --border: rgba(255, 210, 150, .55);     /* box outline */
+  --gold: #ffd27a;                        /* hover glow and accents */
+  --gold-light: #ffd9a0;                  /* tagline color */
+  --btn-top: #ffc15a;                     /* highlighted button, top */
+  --btn-bottom: #ff7a3c;                  /* highlighted button, bottom */
+  --btn-text: #2a1405;                    /* highlighted button text */
+  --shade-top: rgba(0, 0, 0, .22);        /* darkening over the picture */
+  --shade-bottom: rgba(0, 0, 0, .55);
+}
+
+/* ---------- LAYOUT: you can leave this alone ---------- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Poppins", system-ui, sans-serif;
+  background: #2a1a3a;
+  color: var(--text);
+  min-height: 100vh; display: flex; justify-content: center;
+  padding: 60px 18px 96px; line-height: 1.4;
+}
+
+/* background pictures: one layer per page, crossfading (set in the script) */
+.bg-layer {
+  position: fixed; inset: 0; z-index: -1; opacity: 0; transition: opacity .5s ease;
+  background-size: cover; background-position: center; background-repeat: no-repeat;
+}
+.bg-layer.show { opacity: 1; }
+
+main { width: 100%; max-width: 520px; text-align: center; }
+
+.avatar {
+  width: 128px; height: 128px; border-radius: 12px; object-fit: cover;
+  border: 3px solid var(--gold);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, .55);
+  background: var(--card); margin-bottom: 22px;
+}
+
+/* Title */
+h1 {
+  font-family: "Silkscreen", sans-serif; font-weight: 700;
+  font-size: clamp(1.5rem, 6vw, 2.3rem); line-height: 1.2;
+  letter-spacing: .04em; text-transform: uppercase;
+  background: linear-gradient(180deg, #ffffff, #ffd9a0);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  filter: drop-shadow(3px 3px 0 rgba(0, 0, 0, .6));
+}
+
+/* Tagline and bio */
+.tagline {
+  font-family: "VT323", monospace;
+  font-size: clamp(1.3rem, 4.5vw, 1.7rem);
+  letter-spacing: .12em; margin-top: 8px; color: var(--gold-light);
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, .7);
+}
+.bio {
+  font-family: "VT323", monospace;
+  font-size: 1.35rem; max-width: 40ch; margin: 10px auto 0;
+  color: #fff; text-shadow: 2px 2px 0 rgba(0, 0, 0, .75);
+}
+
+.links { margin-top: 34px; display: flex; flex-direction: column; gap: 16px; }
+
+/* Section headings (centered, line on both sides) */
+.section-title {
+  font-family: "Silkscreen", sans-serif; font-weight: 700;
+  font-size: .85rem; letter-spacing: .22em; text-transform: uppercase;
+  margin: 16px 0 -2px;
+  display: flex; align-items: center; justify-content: center; gap: 14px;
+  color: var(--gold-light); text-shadow: 2px 2px 0 rgba(0, 0, 0, .8);
+}
+.section-title::before, .section-title::after {
+  content: ""; flex: 1; height: 2px;
+}
+.section-title::before { background: linear-gradient(270deg, rgba(255,210,150,.8), transparent); }
+.section-title::after  { background: linear-gradient(90deg,  rgba(255,210,150,.8), transparent); }
+
+/* The boxes (blocky, with hard shadow) */
+.link {
+  position: relative; display: block; text-decoration: none; color: var(--text);
+  text-align: center; padding: 20px 52px; border-radius: 6px;
+  background: var(--card);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  border: 2px solid var(--border);
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, .55);
+  transition: transform .12s ease, border-color .12s ease,
+              box-shadow .12s ease, background .12s ease;
+}
+.link:hover, .link:focus-visible {
+  transform: translate(-2px, -2px);
+  background: var(--card-hover);
+  border-color: var(--gold);
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, .55), 0 0 22px rgba(255, 210, 122, .5);
+  outline: none;
+}
+.link:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 rgba(0, 0, 0, .55); }
+
+.link strong {
+  display: block; font-family: "Silkscreen", sans-serif; font-weight: 700;
+  font-size: 1rem; letter-spacing: .06em;
+}
+.link span {
+  display: block; font-family: "VT323", monospace;
+  color: var(--muted); font-size: 1.2rem; margin-top: 2px;
+}
+
+/* little arrow on the right */
+.link::after {
+  content: "\25B6"; font-size: .8rem;
+  position: absolute; right: 22px; top: 50%;
+  transform: translateY(-50%); opacity: .6; color: var(--gold);
+  transition: transform .12s ease, opacity .12s ease;
+}
+.link:hover::after { transform: translate(5px, -50%); opacity: 1; }
+
+/* The highlighted box (primary: true) */
+.link.primary {
+  padding: 24px;
+  background: linear-gradient(180deg, var(--btn-top), var(--btn-bottom));
+  border-color: #fff2cf; color: var(--btn-text);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, .55);
+}
+.link.primary:hover, .link.primary:focus-visible {
+  background: linear-gradient(180deg, var(--btn-top), var(--btn-bottom));
+  filter: brightness(1.08);
+  box-shadow: 9px 9px 0 rgba(0, 0, 0, .55), 0 0 26px rgba(255, 193, 90, .6);
+}
+.link.primary::after { display: none; }
+.link.primary strong { font-size: 1.2rem; letter-spacing: .1em; }
+.link.primary span { color: var(--btn-text); opacity: .85; }
+
+/* Back button on sub-pages */
+.link.back { padding: 12px 40px; }
+.link.back::after { display: none; }
+.link.back strong { font-size: .85rem; }
+
+/* Music button (bottom-right corner) */
+.audio-ctl { position: fixed; right: 16px; bottom: 16px; z-index: 10; display: flex; align-items: center; gap: 8px; }
+.share-btn { position: fixed; right: 16px; top: 14px; z-index: 10; }
+.vol-box {
+  display: flex; align-items: center; padding: 0 12px; height: 40px;
+  background: var(--card); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  border: 2px solid var(--border); border-radius: 6px; box-shadow: 4px 4px 0 rgba(0, 0, 0, .55);
+}
+.vol {
+  -webkit-appearance: none; appearance: none; width: 84px; height: 8px; border-radius: 2px;
+  cursor: pointer; outline-offset: 6px;
+  background: linear-gradient(90deg, var(--gold) var(--v, 50%), rgba(255, 255, 255, .25) var(--v, 50%));
+}
+.vol::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 14px; height: 20px; border-radius: 2px;
+  background: var(--btn-top); border: 2px solid #fff2cf; box-shadow: 2px 2px 0 rgba(0, 0, 0, .55);
+}
+.vol::-moz-range-thumb { width: 10px; height: 16px; border-radius: 2px; background: var(--btn-top); border: 2px solid #fff2cf; }
+.music-btn {
+  font-family: "Silkscreen", sans-serif; font-weight: 700;
+  font-size: .75rem; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--text); background: var(--card); cursor: pointer;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  border: 2px solid var(--border); border-radius: 6px;
+  padding: 10px 14px; box-shadow: 4px 4px 0 rgba(0, 0, 0, .55);
+  transition: transform .12s ease, border-color .12s ease;
+}
+.music-btn:hover { border-color: var(--gold); transform: translate(-1px, -1px); }
+.music-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 rgba(0, 0, 0, .55); }
+.music-btn.on { background: linear-gradient(180deg, var(--btn-top), var(--btn-bottom)); color: var(--btn-text); border-color: #fff2cf; }
+
+/* "Tap to enter" screen (lets the music start right away) */
+.gate {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+  padding: 24px; text-align: center; cursor: pointer;
+  background: rgba(20, 10, 5, .88);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+}
+.gate h2 {
+  font-family: "Silkscreen", sans-serif; font-weight: 700;
+  font-size: clamp(1.2rem, 5vw, 1.8rem); letter-spacing: .06em; text-transform: uppercase;
+  color: #fff; text-shadow: 3px 3px 0 rgba(0, 0, 0, .7);
+}
+.gate .enter-btn {
+  font-family: "Silkscreen", sans-serif; font-weight: 700; font-size: 1.1rem;
+  letter-spacing: .1em; text-transform: uppercase; cursor: pointer;
+  padding: 18px 34px; border-radius: 6px;
+  background: linear-gradient(180deg, var(--btn-top), var(--btn-bottom));
+  color: var(--btn-text); border: 2px solid #fff2cf;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, .55);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+.gate .enter-btn:active { transform: translate(3px, 3px); box-shadow: 3px 3px 0 rgba(0, 0, 0, .55); }
+.gate p { font-family: "VT323", monospace; font-size: 1.3rem; color: var(--gold-light); text-shadow: 2px 2px 0 rgba(0, 0, 0, .8); }
+@keyframes pulse { 50% { transform: scale(1.05); } }
+
+footer {
+  margin-top: 40px; font-family: "VT323", monospace;
+  font-size: 1.15rem; letter-spacing: .15em; text-transform: uppercase;
+  color: #fff; text-shadow: 2px 2px 0 rgba(0, 0, 0, .85);
+}
+
+/* Upcoming events */
+.ev-card, .event {
+  background: var(--card); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  border: 2px solid var(--border); border-radius: 6px; box-shadow: 5px 5px 0 rgba(0, 0, 0, .55);
+}
+/* the highlighted "next event" card */
+.ev-card {
+  padding: 0; overflow: hidden; border-color: var(--gold);
+  background: linear-gradient(180deg, rgba(70, 38, 18, .86), rgba(30, 18, 12, .86));
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, .55), 0 0 26px rgba(255, 193, 90, .45);
+}
+.ev-label {
+  display: flex; align-items: center; justify-content: center; gap: 10px; padding: 8px 12px;
+  font-family: "Silkscreen", sans-serif; font-weight: 700; font-size: .75rem; letter-spacing: .22em;
+  background: linear-gradient(180deg, var(--btn-top), var(--btn-bottom)); color: var(--btn-text);
+  border-bottom: 2px solid #fff2cf;
+}
+.ev-label::before { content: ""; width: 8px; height: 8px; background: var(--btn-text); animation: pulse 1.2s ease-in-out infinite; }
+.ev-body { padding: 18px 16px 16px; }
+.ev-title { font-family: "Silkscreen", sans-serif; font-weight: 700; font-size: clamp(1.05rem, 4.6vw, 1.35rem); line-height: 1.25; text-shadow: 3px 3px 0 rgba(0, 0, 0, .6); }
+.ev-when { font-family: "VT323", monospace; font-size: 1.25rem; color: var(--muted); }
+.ev-empty { font-family: "VT323", monospace; font-size: 1.3rem; color: var(--muted); }
+.countdown { display: flex; justify-content: center; gap: 10px; margin-top: 14px; }
+.countdown div { min-width: 62px; padding: 8px 6px; background: rgba(0, 0, 0, .55); border: 2px solid var(--gold); border-radius: 4px; box-shadow: 3px 3px 0 rgba(0, 0, 0, .55); }
+.countdown b { display: block; font-family: "Silkscreen", sans-serif; font-size: 1.7rem; color: var(--gold); text-shadow: 2px 2px 0 rgba(0, 0, 0, .6); }
+.countdown small { font-family: "VT323", monospace; font-size: 1rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.event { display: flex; align-items: center; gap: 14px; padding: 12px 14px; text-align: left; }
+.date-badge {
+  flex: none; width: 56px; padding: 6px 0; text-align: center; border-radius: 4px;
+  background: linear-gradient(180deg, var(--btn-top), var(--btn-bottom));
+  color: var(--btn-text); border: 2px solid #fff2cf; font-family: "Silkscreen", sans-serif;
+}
+.date-badge small { display: block; font-size: .6rem; letter-spacing: .1em; }
+.date-badge b { display: block; font-size: 1.3rem; line-height: 1.1; }
+.event strong { display: block; font-family: "Silkscreen", sans-serif; font-size: .85rem; letter-spacing: .04em; }
+.event span { display: block; font-family: "VT323", monospace; font-size: 1.15rem; color: var(--muted); }
+
+.ev-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.ev-card .ev-actions { justify-content: center; margin-top: 14px; }
+.ev-actions .music-btn { padding: 6px 10px; font-size: .65rem; text-decoration: none; display: inline-block; box-shadow: 3px 3px 0 rgba(0, 0, 0, .55); }
+
+/* On-page event editor */
+.share-panel.wide { max-width: 560px; text-align: left; }
+.ed-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px; margin-bottom: 12px; background: rgba(0, 0, 0, .35); border: 2px solid var(--border); border-radius: 4px; }
+.ed-f { display: block; min-width: 0; }
+.ed-f.w, .ed-end, .ed-pin { grid-column: 1 / -1; }
+.ed-f span { display: block; font-family: "Silkscreen", sans-serif; font-size: .55rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold-light); margin-bottom: 3px; }
+.share-panel input[type=text], .share-panel input[type=date], .share-panel input[type=time], .share-panel input[type=number], .share-panel input[type=url], .share-panel input[type=password] {
+  width: 100%; padding: 8px; font: .85rem "Poppins", sans-serif; color: #fff; color-scheme: dark;
+  background: rgba(0, 0, 0, .5); border: 2px solid var(--border); border-radius: 4px;
+}
+.ed-end { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.ed-c { font-size: .8rem; display: flex; align-items: center; gap: 6px; }
+.ed-end .music-btn { margin-left: auto; padding: 6px 10px; font-size: .65rem; }
+.ed-status { font-family: "VT323", monospace; font-size: 1.2rem; color: var(--gold-light); min-height: 1.3em; margin-top: 10px; }
+
+/* Share window + QR poster */
+.share-modal {
+  position: fixed; inset: 0; z-index: 90; display: flex; align-items: center; justify-content: center;
+  padding: 18px; background: rgba(20, 10, 5, .82); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+}
+.share-panel {
+  position: relative; width: 100%; max-width: 360px; max-height: 100%; overflow: auto;
+  padding: 22px 18px 18px; text-align: center; background: var(--card-hover);
+  border: 2px solid var(--gold); border-radius: 6px; box-shadow: 6px 6px 0 rgba(0, 0, 0, .55);
+}
+.share-panel .section-title { margin: 0 0 14px; }
+.poster { background: #fff; color: #1a1008; padding: 14px; border-radius: 4px; }
+.poster h3 { font-family: "Silkscreen", sans-serif; font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; }
+.poster svg { display: block; width: 100%; max-width: 240px; margin: 10px auto; }
+.poster .cap { font-family: "VT323", monospace; font-size: 1.3rem; }
+.poster .u { font-size: .7rem; word-break: break-all; opacity: .7; }
+.share-row { display: flex; gap: 8px; margin-top: 14px; }
+.share-row .music-btn { flex: 1; padding: 10px 6px; }
+.share-note { font-family: "VT323", monospace; font-size: 1.1rem; color: var(--gold-light); margin-top: 10px; }
+.music-btn.x { position: absolute; top: 8px; right: 8px; padding: 4px 8px; }
+.music-btn.primary { background: linear-gradient(180deg, var(--btn-top), var(--btn-bottom)); color: var(--btn-text); border-color: #fff2cf; }
+
+/* fade-in when the page loads */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+.avatar, h1, .tagline, .bio, .section-title, .link, .ev-card, .event, footer { animation: rise .5s ease backwards; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+
+/* smaller phones */
+@media (max-width: 420px) {
+  .link { padding: 18px 40px; }
+  .link strong { font-size: .92rem; }
+  .vol { width: 60px; }
+  .countdown { gap: 6px; }
+  .countdown div { min-width: 56px; }
+}
+
+/* Print only the QR poster (used by the Print button in the Share window) */
+@media print {
+  body.qr-print { display: block; padding: 0; background: #fff; }
+  body.qr-print > *:not(.share-modal) { display: none !important; }
+  body.qr-print .share-modal { position: static; display: block; padding: 0; background: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  body.qr-print .share-panel { max-width: none; border: 0; box-shadow: none; background: none; padding: 0; overflow: visible; }
+  body.qr-print .share-panel > *:not(.poster) { display: none !important; }
+  body.qr-print .poster { padding: .5in; color: #000; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body.qr-print .poster h3 { font-size: 28pt; }
+  body.qr-print .poster svg { max-width: 6in; }
+  body.qr-print .poster .cap { font-size: 24pt; }
+  body.qr-print .poster .u { font-size: 14pt; opacity: 1; }
+}
+</style>
+</head>
+
+<body>
+<main id="app"></main>
+
+<script>
+/* =====================================================================
+   PART 1 OF 3: YOUR CONTENT  <<< EDIT THIS PART
+   ===================================================================== */
+
+const CONFIG = {
+
+  // ----- Page info -----
+  pageTitle: "ACADEMIC AND RESEARCH BAND LINKS",   // text on the browser tab
+  name:      "RADIO ENGINEERING CIRCLE",
+  tagline:   "ACADEMIC AND RESEARCH BAND",
+  bio:       "This page is dedicated solely for organizational work",   // "" to hide
+  avatar:    "avatar.png",          // your logo/photo file; "" to hide
+  music:     "music.mp3",           // background music file (same folder); "" to turn music off
+  enterScreen: true,                // show a "tap to enter" screen if the browser blocks autoplay, so music starts right away
+  sfx:       true,                  // click/hover sound effects; false to turn all of them off
+  clickSound: "click.mp3",          // YOUR click sound file (same folder); "" = use the built-in beep
+  hoverSound: "",                   // optional sound when hovering a button; "" = none
+  footerName: "&copy; 2026 2027 RADIO ENGINEERING CIRCLE",   // shown exactly as typed; "" to hide the footer
+
+  // ----- Background pictures -----
+  // Home uses "bg". Each extra page can have its own  bg: "file.jpg"  (see Extra pages).
+  // A page without a picture, or with a missing file, falls back to this one.
+  bg: "bg.jpg",
+
+  // ----- Upcoming events -----
+  // countdown: true = show the countdown timer; false = hide it everywhere (dates only).
+  // To hide it for ONE event, add  countdown: false  to that event.
+  // pauseButton: true = visitors get a "Pause timer" button; false = no button.
+  // date = "YYYY-MM-DD", time = "HH:MM" in 24-hour time (leave "" for an all-day event).
+  // type is just a label (Meeting, Training, Contest...). Past events hide by themselves.
+  // link = optional Teams (or Zoom/Meet) meeting link. It shows a "Join" button and goes inside the calendar entry.
+  // duration = length in minutes (default 60).
+  // The sample events below are placeholders: replace them with your real ones.
+  countdown: true,
+  pauseButton: true,
+  eventsOnHome: true,         // show the next events on the home page; false = only on the Events page
+  eventsPosition: "top",      // "top" or "bottom" of the home page buttons
+  homeMoreEvents: 0,          // extra events listed under the next one on the home page (0 = only the next event, the rest are on the Events page)
+  events: [
+    { date: "2026-10-24", time: "13:00", title: "Workshop 1",   type: "General Assembly",  note: "", link: "", duration: 60, show: true },
+    { date: "2026-11-09", time: "09:00", title: "Weekly Pubmat",  type: "Facebook Post", note: "", show: true },
+    { date: "2026-10-28", time: "08:00", title: "Leaderboard Result Posting",       type: "Awarding",  note: "", show: true },
+    { date: "2026-12-05", time: "",      title: "Event name",                 type: "Meeting",  note: "", show: false },
+  ],
+
+  // ----- Share button and QR code -----
+  shareUrl:     "https://dlgdkarl-tech.github.io/ACADEMIC-AND-RESEARCH-BAND-LINKS/",                                  // your live page link; "" = use the address the visitor is on
+  shareCaption: "Scan to open our links page",       // text printed under the QR code
+
+  // ----- Buttons -----
+  // - To HIDE a link or group:    set  show: false   (or delete it)
+  // - To ADD a link:              copy one line and change it
+  // - To make a button stand out: add  primary: true
+  // - Paste each link between the quotes after  url:
+  groups: [
+
+    {
+      title: "",
+      links: [
+        { label: "Leaderboard", note: "spreadsheet link", url: "https://docs.google.com/spreadsheets/d/1VRIOXPtysbKZPeQSMcz1xXxmaXlZhHR1CFLTUHc0vD0/edit?usp=drive_link", primary: true, show: true },
+      ]
+    },
+
+    {
+      title: "Directories",
+      links: [
+        { label: "ANNOUNCEMENTS",     note: "gdocs link",        url: "", show: false },   // PASTE LINK
+        { label: "WORKING DOCS FILE", note: "gdocs link",        url: "", show: true },   // PASTE LINK
+        { label: "GOOGLE DRIVE",      note: "gdrive link",       url: "", show: true },   // PASTE LINK
+        { label: "SUBMISSION BIN",    note: "spreadsheet link",  url: "", show: true },   // PASTE LINK
+        { label: "TASK TRACKER",      note: "spreadsheet link",  url: "", show: true },   // PASTE LINK
+        { label: "RESOURCES",         note: "gdocs link",        url: "", show: false },   // PASTE LINK
+      ]
+    },
+
+    {
+      title: "Contact Info",
+      links: [
+        // "page" opens another page below instead of an outside link
+        { label: "President",      note: "",      page: "president",     show: true },
+        { label: "Vice President", note: "", page: "vicepresident", show: true },
+        { label: "Manager",        note: "",        page: "managers",      show: true },
+      ]
+    },
+
+  ],
+
+  // ----- Extra pages -----
+  // Each page has an ID (the name before the colon). A button opens a page
+  // by using  page: "ID"  instead of  url: "..."
+  // "back" is the ID of the page the Back button returns to (leave out for home).
+  pages: {
+
+    president: {
+      title: "President",
+      bg: "bg-president.jpg",
+      groups: [
+        { title: "", links: [
+          { label: "President", note: "Benj Simeon Franco", url: "", show: true },   // PASTE LINK
+          { label: "President 2", note: "Facebook", url: "", show: false },   // PASTE LINK
+          { label: "President 3", note: "Facebook", url: "", show: false },   // PASTE LINK
+          { label: "President 4", note: "Facebook", url: "", show: false },   // PASTE LINK
+          { label: "President 5", note: "Facebook", url: "", show: false },   // PASTE LINK
+          { label: "President 6", note: "Facebook", url: "", show: false },   // PASTE LINK
+          { label: "President 7", note: "Facebook", url: "", show: false },   // PASTE LINK
+          { label: "President 8", note: "Facebook", url: "", show: false },   // PASTE LINK
+          { label: "President 9", note: "Facebook", url: "", show: false },   // PASTE LINK
+          { label: "President 10", note: "Facebook", url: "", show: false },   // PASTE LINK
+        ]}
+      ]
+    },
+
+    vicepresident: {
+      title: "Vice President",
+      bg: "bg-vicepresident.jpg",
+      groups: [
+        { title: "", links: [
+          { label: "Executive Vice President", note: "Nicole Kieth Lacsamana", url: "", show: true },   // PASTE LINK
+          { label: "Vice President for Internal Affairs", note: "Mark Angelo Macawile", url: "", show: true },   // PASTE LINK
+          { label: "Vice President for External Affairs", note: "Thea Marie", url: "", show: true },   // PASTE LINK
+          { label: "Vice President for Admission, Recruitment, and Membership", note: "Christine Escomen", url: "", show: true },   // PASTE LINK
+          { label: "Vice President for Secretariat", note: "Mikylla Valete", url: "", show: true },   // PASTE LINK
+          { label: "Vice President for Finance", note: "Russel Francisco", url: "", show: true },   // PASTE LINK
+          { label: "Vice President for Sports and Leisure", note: "Jethro Gultiano", url: "", show: true },   // PASTE LINK
+          { label: "Vice President for Academic Concerns", note: "Engr. Carl Delgado, ECE, ECT, PECE, VPAC", url: "https://www.facebook.com/carl.delgado.739978", show: true },   // PASTE LINK
+          { label: "Vice President for Technical Service", note: "Carl Guia", url: "", show: true },   // PASTE LINK
+          { label: "Vice President 10", note: "Facebook", url: "", show: false },   // PASTE LINK
+        ]}
+      ]
+    },
+
+    managers: {
+      title: "Manager",
+      bg: "bg-managers.jpg",
+      groups: [
+        { title: "", links: [
+          { label: "Licensing Manager", note: "Iza Salazar", url: "", show: true },
+          { label: "Ombudsman", note: "Dave Alwin Comia", url: "", show: true },   // PASTE LINK
+          { label: "Information Manager", note: "Clarence Jake Cenas", url: "", show: true },   // PASTE LINK
+          { label: "Recruitment Manager", note: "Gwen Dale Atienza", url: "", show: true },   // PASTE LINK
+          { label: "Records Manager", note: "Raliza Ramos", url: "", show: true },   // PASTE LINK
+          { label: "Internal Audit Manager", note: "Robb Toledo", url: "", show: true },   // PASTE LINK
+          { label: "Funds Manager", note: "Harry Anahaw", url: "", show: true },   // PASTE LINK
+          { label: "Contest and QSL Manager", note: "Dominic Lagunero", url: "", show: true },   // PASTE LINK
+          { label: "Academic and Research Manager", note: "Isaiah Nalus", url: "", show: true },   // PASTE LINK
+          { label: "Operations and Development Manager", note: "Angelo Doneza", url: "", show: true },   // PASTE LINK
+          { label: "Manager", note: "", url: "", show: false },   // PASTE LINK
+        ]}
+      ]
+    },
+
+    // The Events page (opened by the "All events" button on the home page)
+    events: { title: "Events", type: "events", bg: "bg-events.jpg" },
+
+  }
+};
+
+
+/* =====================================================================
+   PART 3 OF 3: PAGE BUILDER  <<< DON'T TOUCH
+   ===================================================================== */
+
+(function () {
+  const esc = s => String(s).replace(/[&<>"']/g, c =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  // ----- Backgrounds (crossfade, one picture per page) -----
+  let curBg = null;
+  function setBg(src) {
+    const base = CONFIG.bg || "bg.jpg";
+    src = src || base;
+    if (src === curBg) return;
+    curBg = src;
+    const el = document.createElement("div");
+    el.className = "bg-layer";
+    el.style.backgroundImage = `linear-gradient(var(--shade-top), var(--shade-bottom)), url("${src}"), url("${base}")`;
+    document.body.appendChild(el);
+    void el.offsetWidth;
+    el.classList.add("show");
+    document.querySelectorAll(".bg-layer").forEach(o => { if (o !== el) setTimeout(() => o.remove(), 600); });
+  }
+
+  // ----- Upcoming events + countdown -----
+  const MON = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+  function parseEvents() {
+    const now = Date.now();
+    return (CONFIG.events || []).filter(e => e.show !== false && e.date).map(e => {
+      const [y, m, d] = e.date.split("-").map(Number);
+      const [hh, mm] = (e.time || "00:00").split(":").map(Number);
+      const start = new Date(y, m - 1, d, hh || 0, mm || 0);
+      const end = e.time ? start.getTime() : new Date(y, m - 1, d + 1).getTime();
+      return { ...e, start, end, i: CONFIG.events.indexOf(e) };
+    }).filter(e => e.end > now).sort((a, b) => a.start - b.start);
+  }
+  const evMeta = e => [
+    e.start.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }),
+    e.time && e.start.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+    e.type
+  ].filter(Boolean).join(" \u00B7 ");
+  const evRow = e => `<div class="event"><div class="date-badge"><small>${MON[e.start.getMonth()]}</small><b>${e.start.getDate()}</b></div>` +
+    `<div><strong>${esc(e.title)}</strong><span>${esc(evMeta(e))}</span>${e.note ? `<span>${esc(e.note)}</span>` : ""}${evActions(e)}</div></div>`;
+
+  // ----- Pause / resume the countdown (per visitor) -----
+  let cdPaused = false, pausedAt = 0;
+  document.addEventListener("click", ev => {
+    const b = ev.target.closest && ev.target.closest("[data-cd]");
+    if (!b) return;
+    cdPaused = !cdPaused; pausedAt = Date.now();
+    b.textContent = cdPaused ? "Resume timer" : "Pause timer";
+    tick();
+  });
+
+  // ----- Add to calendar (.ics file or Google Calendar) -----
+  const okLink = u => /^https?:\/\//i.test(u || "");
+  function evActions(e) {
+    return `<div class="ev-actions">` +
+      (okLink(e.link) ? `<a class="music-btn primary" href="${esc(e.link)}" target="_blank" rel="noopener">Join Teams</a>` : "") +
+      `<button type="button" class="music-btn" data-cal="ics" data-i="${e.i}">Add to Calendar</button>` +
+      `<button type="button" class="music-btn" data-cal="google" data-i="${e.i}">Google</button></div>`;
+  }
+  function calInfo(e) {
+    const p2 = n => String(n).padStart(2, "0");
+    const fmt = d => `${d.getFullYear()}${p2(d.getMonth() + 1)}${p2(d.getDate())}`;
+    const fmtT = d => `${fmt(d)}T${p2(d.getHours())}${p2(d.getMinutes())}00`;
+    const allDay = !e.time, end = new Date(e.start.getTime() + (e.duration || 60) * 60000);
+    const next = new Date(e.start.getFullYear(), e.start.getMonth(), e.start.getDate() + 1);
+    const desc = [e.note, e.type && `Type: ${e.type}`, okLink(e.link) && `Join: ${e.link}`].filter(Boolean).join("\n");
+    return {
+      title: `${e.title} - ${CONFIG.name}`, desc, loc: okLink(e.link) ? e.link : "",
+      s: allDay ? fmt(e.start) : fmtT(e.start), e: allDay ? fmt(next) : fmtT(end), allDay
+    };
+  }
+  function addToCalendar(e, kind) {
+    const c = calInfo(e);
+    if (kind === "google") {
+      const q = new URLSearchParams({ action: "TEMPLATE", text: c.title, dates: `${c.s}/${c.e}`, details: c.desc, location: c.loc });
+      window.open("https://calendar.google.com/calendar/render?" + q.toString(), "_blank", "noopener");
+      return;
+    }
+    const t = x => String(x).replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
+    const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
+    const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Radio Engineering Circle//Events//EN", "BEGIN:VEVENT",
+      `UID:${c.s}-${e.i}@events`, `DTSTAMP:${stamp}`,
+      c.allDay ? `DTSTART;VALUE=DATE:${c.s}` : `DTSTART:${c.s}`, c.allDay ? `DTEND;VALUE=DATE:${c.e}` : `DTEND:${c.e}`,
+      `SUMMARY:${t(c.title)}`, c.desc && `DESCRIPTION:${t(c.desc)}`, c.loc && `LOCATION:${t(c.loc)}`, c.loc && `URL:${c.loc}`,
+      "BEGIN:VALARM", "TRIGGER:-PT30M", "ACTION:DISPLAY", `DESCRIPTION:${t(e.title)}`, "END:VALARM", "END:VEVENT", "END:VCALENDAR"].filter(Boolean);
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([lines.join("\r\n")], { type: "text/calendar;charset=utf-8" }));
+    a.download = (e.title || "event").toLowerCase().replace(/[^a-z0-9]+/g, "-") + ".ics";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }
+  document.addEventListener("click", ev => {
+    const b = ev.target.closest && ev.target.closest("[data-cal]");
+    const e = b && (CONFIG.events || [])[+b.dataset.i];
+    if (!e) return;
+    const [y, m, d] = e.date.split("-").map(Number), [hh, mm] = (e.time || "00:00").split(":").map(Number);
+    addToCalendar({ ...e, start: new Date(y, m - 1, d, hh || 0, mm || 0), i: +b.dataset.i }, b.dataset.cal);
+  });
+
+  function eventsHTML(full) {
+    const list = parseEvents();
+    if (!list.length) return full ? `<p class="section-title">Upcoming Events</p><p class="ev-empty">No events scheduled yet. Check back soon!</p>` : "";
+    const n = list[0], started = n.start <= Date.now(), showCd = CONFIG.countdown !== false && n.countdown !== false;
+    let out = `<p class="section-title">Upcoming Events</p><div class="ev-card"><p class="ev-label">${started ? "HAPPENING TODAY" : "NEXT UP"}</p><div class="ev-body">` +
+      `<p class="ev-title">${esc(n.title)}</p><p class="ev-when">${esc(evMeta(n))}</p>` +
+      (n.note ? `<p class="ev-when">${esc(n.note)}</p>` : "") +
+      (started || !showCd ? "" : `<div class="countdown" data-t="${n.start.getTime()}"><div><b>00</b><small>days</small></div><div><b>00</b><small>hrs</small></div><div><b>00</b><small>min</small></div><div><b>00</b><small>sec</small></div></div>` + (CONFIG.pauseButton === false ? "" : `<div class="ev-actions"><button type="button" class="music-btn" data-cd>${cdPaused ? "Resume timer" : "Pause timer"}</button></div>`)) +
+      evActions(n) + `</div></div>`;
+    out += list.slice(1, full ? undefined : 1 + (CONFIG.homeMoreEvents ?? 2)).map(evRow).join("");
+    if (!full && CONFIG.pages && CONFIG.pages.events) out += `<a class="link back" href="#events"><strong>All events \u25B6</strong></a>`;
+    return out;
+  }
+
+  function tick() {
+    const now = cdPaused ? pausedAt : Date.now();
+    document.querySelectorAll(".countdown").forEach(c => {
+      if (+c.dataset.t <= now) { render(true); return; }   // event started: refresh the list
+      const s = Math.max(0, Math.floor((c.dataset.t - now) / 1000));
+      const v = [Math.floor(s / 86400), Math.floor(s % 86400 / 3600), Math.floor(s % 3600 / 60), s % 60];
+      c.querySelectorAll("b").forEach((b, i) => { b.textContent = String(v[i]).padStart(2, "0"); });
+    });
+  }
+  setInterval(tick, 1000);
+
+  function linkHTML(l) {
+    const cls = "link" + (l.primary ? " primary" : "");
+    const inner = `<strong>${esc(l.label)}</strong>` + (l.note ? `<span>${esc(l.note)}</span>` : "");
+    if (l.page)  return `<a class="${cls}" href="#${esc(l.page)}">${inner}</a>`;
+    if (!l.url)  return `<a class="${cls}">${inner}</a>`;   // empty link: does nothing
+    const external = /^https?:/i.test(l.url) ? ' target="_blank" rel="noopener"' : "";
+    return `<a class="${cls}" href="${esc(l.url)}"${external}>${inner}</a>`;
+  }
+
+  function groupsHTML(groups) {
+    let out = "";
+    (groups || []).forEach(g => {
+      const visible = (g.links || []).filter(l => l.show !== false);
+      if (!visible.length) return;
+      if (g.title) out += `<p class="section-title">${esc(g.title)}</p>`;
+      visible.forEach(l => { out += linkHTML(l); });
+    });
+    return out;
+  }
+
+  function render(keep) {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const sub = (CONFIG.pages || {})[id];
+
+    document.title = sub ? `${sub.title} | ${CONFIG.pageTitle}` : CONFIG.pageTitle;
+    setBg(sub && sub.bg);
+
+    let html = "";
+    if (CONFIG.avatar) {
+      html += `<img class="avatar" src="${esc(CONFIG.avatar)}" alt="${esc(CONFIG.name)}" onerror="this.style.display='none'">`;
+    }
+    html += `<h1>${esc(CONFIG.name)}</h1>`;
+    if (CONFIG.tagline) html += `<p class="tagline">${esc(CONFIG.tagline)}</p>`;
+
+    html += `<div class="links">`;
+    if (sub) {
+      html += `<a class="link back" href="#${esc(sub.back || "")}"><strong>\u25C0 Back</strong></a>`;
+      html += `<p class="section-title">${esc(sub.title)}</p>`;
+      html += sub.type === "events" ? eventsHTML(true) : groupsHTML(sub.groups);
+    } else {
+      if (CONFIG.bio) html = html.replace('<div class="links">', '') + `<p class="bio">${esc(CONFIG.bio)}</p><div class="links">`;
+      const ev = CONFIG.eventsOnHome === false ? "" : eventsHTML(false);
+      if (CONFIG.eventsPosition === "top") html += ev;
+      html += groupsHTML(CONFIG.groups);
+      if (CONFIG.eventsPosition !== "top") html += ev;
+    }
+    html += `</div>`;
+
+    if (CONFIG.footerName) html += `<footer>${CONFIG.footerName}</footer>`;
+
+    document.getElementById("app").innerHTML = html;
+    if (keep !== true) window.scrollTo(0, 0);
+    tick();
+  }
+
+  let muted = false;   // set when the visitor turns sound off with the button
+
+  // ----- Background music -----
+  // Plays on every page. Browsers block sound until the visitor interacts,
+  // so it starts on the first tap/click anywhere, and keeps playing across pages.
+  if (CONFIG.music) {
+    const audio = new Audio(CONFIG.music);
+    audio.loop = true;
+    audio.volume = 0.5;
+    let userPaused = false;
+
+    const btn = document.createElement("button");
+    btn.className = "music-btn";
+    btn.type = "button";
+    const label = () => {
+      btn.textContent = audio.paused ? "\u266A Sound: Off" : "\u266A Sound: On";
+      btn.classList.toggle("on", !audio.paused);
+    };
+
+    const start = () => audio.play().then(label).catch(() => {});
+    const unlock = () => {
+      if (!userPaused && audio.paused) start();
+      ["pointerdown", "keydown", "touchstart"].forEach(e => document.removeEventListener(e, unlock));
+    };
+    ["pointerdown", "keydown", "touchstart"].forEach(e => document.addEventListener(e, unlock));
+
+    btn.addEventListener("click", e => {
+      e.stopPropagation();
+      if (audio.paused) { userPaused = false; muted = false; start(); }
+      else { userPaused = true; muted = true; audio.pause(); label(); }
+    });
+    audio.addEventListener("error", () => { btn.textContent = "Music file not found"; });
+
+    label();
+    // Volume slider (remembers the visitor's setting)
+    const vol = document.createElement("input");
+    vol.type = "range"; vol.min = 0; vol.max = 100; vol.step = 1; vol.className = "vol";
+    vol.setAttribute("aria-label", "Music volume"); vol.title = "Volume";
+    let saved = null; try { saved = localStorage.getItem("music-volume"); } catch (e) {}
+    const v0 = saved !== null && saved !== "" && !isNaN(saved) ? Math.min(1, Math.max(0, +saved)) : 0.5;
+    audio.volume = v0; vol.value = Math.round(v0 * 100);
+    const paint = () => vol.style.setProperty("--v", vol.value + "%");
+    vol.addEventListener("input", () => {
+      audio.volume = vol.value / 100; paint();
+      try { localStorage.setItem("music-volume", audio.volume); } catch (e) {}
+    });
+    paint();
+    const box = document.createElement("div"); box.className = "vol-box"; box.appendChild(vol);
+    const ctl = document.createElement("div"); ctl.className = "audio-ctl";
+    ctl.append(box, btn);
+    document.body.appendChild(ctl);
+    // Try to play immediately. If the browser blocks it, show a "tap to enter" screen:
+    // that one tap lets the music start, and it keeps playing on every page.
+    const showGate = () => {
+      const gate = document.createElement("div");
+      gate.className = "gate";
+      gate.innerHTML = `<h2>${esc(CONFIG.name)}</h2>` +
+                       `<button type="button" class="enter-btn">\u25B6 Tap to enter</button>` +
+                       `<p>Sound on for the best experience</p>`;
+      const enter = () => { userPaused = false; start(); gate.remove(); };
+      gate.addEventListener("click", enter);
+      document.body.appendChild(gate);
+    };
+    audio.play().then(label).catch(() => { if (CONFIG.enterScreen) showGate(); });
+  }
+
+  // ----- Sound effects (made in the browser, no audio files needed) -----
+  if (CONFIG.sfx) {
+    let ctx = null;
+    const blip = (freq, dur, vol) => {
+      if (muted) return;
+      try {
+        ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+        if (ctx.state === "suspended") ctx.resume();
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = "square";                       // retro 8-bit sound
+        o.frequency.setValueAtTime(freq, ctx.currentTime);
+        o.frequency.exponentialRampToValueAtTime(freq * 1.5, ctx.currentTime + dur);
+        g.gain.setValueAtTime(vol, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(); o.stop(ctx.currentTime + dur);
+      } catch (e) {}
+    };
+    const play = src => {
+      if (muted) return;
+      const a = new Audio(src);
+      a.volume = 0.7;
+      a.play().catch(() => {});
+    };
+    let lastHover = null;
+    document.addEventListener("pointerover", e => {
+      const el = e.target.closest && e.target.closest(".link");
+      if (el && el !== lastHover && e.pointerType === "mouse") {
+        if (CONFIG.hoverSound) play(CONFIG.hoverSound);
+        else if (!CONFIG.clickSound) blip(660, 0.05, 0.03);   // built-in hover tick
+      }
+      lastHover = el;
+    });
+    document.addEventListener("click", e => {
+      const el = e.target.closest && e.target.closest(".link, .music-btn");
+      if (!el) return;
+      if (CONFIG.clickSound) play(CONFIG.clickSound);                 // your own click file
+      else if (el.classList.contains("back")) blip(330, 0.12, 0.06);  // built-in: back = lower blip
+      else blip(880, 0.1, 0.06);                                      // built-in: click = higher blip
+    });
+  }
+
+  // ----- QR code maker (byte mode, error level M, no outside files) -----
+  function makeQR(text) {
+    const bytes = Array.from(new TextEncoder().encode(text));
+    const ECC = [0,10,16,26,18,24,16,18,22,22,26,30,22,22,24], BLK = [0,1,1,1,2,2,4,4,4,5,5,5,8,9,9];
+    const rawCW = v => { let r = (16 * v + 128) * v + 64; if (v >= 2) { const a = Math.floor(v / 7) + 2; r -= (25 * a - 10) * a - 55; if (v >= 7) r -= 36; } return r >> 3; };
+    let ver = 1;
+    for (;; ver++) {
+      if (ver > 14) return null;
+      if (4 + (ver < 10 ? 8 : 16) + bytes.length * 8 <= (rawCW(ver) - ECC[ver] * BLK[ver]) * 8) break;
+    }
+    const bits = [], put = (v, n) => { for (let i = n - 1; i >= 0; i--) bits.push((v >>> i) & 1); };
+    const capBits = (rawCW(ver) - ECC[ver] * BLK[ver]) * 8;
+    put(4, 4); put(bytes.length, ver < 10 ? 8 : 16); bytes.forEach(b => put(b, 8));
+    put(0, Math.min(4, capBits - bits.length));
+    while (bits.length % 8) bits.push(0);
+    for (let p = 0xEC; bits.length < capBits; p ^= 0xEC ^ 0x11) put(p, 8);
+    const data = []; for (let i = 0; i < bits.length; i += 8) data.push(parseInt(bits.slice(i, i + 8).join(""), 2));
+    // error correction (Reed-Solomon)
+    const exp = [], log = [];
+    for (let i = 0, x = 1; i < 255; i++) { exp[i] = x; log[x] = i; x <<= 1; if (x & 256) x ^= 0x11D; }
+    const mul = (a, b) => a && b ? exp[(log[a] + log[b]) % 255] : 0;
+    const ecl = ECC[ver]; let gen = [1];
+    for (let i = 0; i < ecl; i++) { const nn = new Array(gen.length + 1).fill(0); gen.forEach((c, j) => { nn[j] ^= c; nn[j + 1] ^= mul(c, exp[i]); }); gen = nn; }
+    const rs = d => { const r = new Array(ecl).fill(0); d.forEach(b => { const f = b ^ r.shift(); r.push(0); gen.slice(1).forEach((c, i) => { r[i] ^= mul(c, f); }); }); return r; };
+    const nb = BLK[ver], raw = rawCW(ver), nShort = nb - raw % nb, shortLen = Math.floor(raw / nb), blocks = [];
+    for (let i = 0, k = 0; i < nb; i++) { const len = shortLen - ecl + (i < nShort ? 0 : 1), d = data.slice(k, k + len); k += len; blocks.push({ d, e: rs(d) }); }
+    const cw = [];
+    for (let i = 0; i <= shortLen - ecl; i++) blocks.forEach(b => { if (i < b.d.length) cw.push(b.d[i]); });
+    for (let i = 0; i < ecl; i++) blocks.forEach(b => cw.push(b.e[i]));
+    // draw the fixed patterns
+    const n = ver * 4 + 17, grid = () => Array.from({ length: n }, () => Array(n).fill(false)), M = grid(), F = grid();
+    const set = (x, y, v) => { if (x >= 0 && y >= 0 && x < n && y < n) { M[y][x] = v; F[y][x] = true; } };
+    const bit = (x, i) => ((x >>> i) & 1) != 0;
+    for (let i = 0; i < n; i++) { set(6, i, i % 2 == 0); set(i, 6, i % 2 == 0); }
+    [[3, 3], [n - 4, 3], [3, n - 4]].forEach(([x, y]) => { for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) { const d = Math.max(Math.abs(dx), Math.abs(dy)); set(x + dx, y + dy, d != 2 && d != 4); } });
+    const na = ver > 1 ? Math.floor(ver / 7) + 2 : 0, step = na ? Math.floor((ver * 8 + na * 3 + 5) / (na * 4 - 4)) * 2 : 0, pos = na ? [6] : [];
+    for (let q = n - 7; pos.length < na; q -= step) pos.splice(1, 0, q);
+    pos.forEach((i, a) => pos.forEach((j, b) => {
+      if ((a == 0 && b == 0) || (a == 0 && b == na - 1) || (a == na - 1 && b == 0)) return;
+      for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) set(i + dx, j + dy, Math.max(Math.abs(dx), Math.abs(dy)) != 1);
+    }));
+    if (ver >= 7) { let r = ver; for (let i = 0; i < 12; i++) r = (r << 1) ^ ((r >>> 11) * 0x1F25); const b = ver << 12 | r; for (let i = 0; i < 18; i++) { const a = n - 11 + i % 3, c = Math.floor(i / 3); set(a, c, bit(b, i)); set(c, a, bit(b, i)); } }
+    const fmt = m => {
+      let r = m; for (let i = 0; i < 10; i++) r = (r << 1) ^ ((r >>> 9) * 0x537);
+      const b = (m << 10 | r) ^ 0x5412;
+      for (let i = 0; i <= 5; i++) set(8, i, bit(b, i));
+      set(8, 7, bit(b, 6)); set(8, 8, bit(b, 7)); set(7, 8, bit(b, 8));
+      for (let i = 9; i < 15; i++) set(14 - i, 8, bit(b, i));
+      for (let i = 0; i < 8; i++) set(n - 1 - i, 8, bit(b, i));
+      for (let i = 8; i < 15; i++) set(8, n - 15 + i, bit(b, i));
+      set(8, n - 8, true);
+    };
+    fmt(0);
+    // place the data
+    for (let right = n - 1, bi = 0; right >= 1; right -= 2) {
+      if (right == 6) right = 5;
+      for (let v = 0; v < n; v++) for (let j = 0; j < 2; j++) {
+        const x = right - j, y = ((right + 1) & 2) == 0 ? n - 1 - v : v;
+        if (!F[y][x] && bi < cw.length * 8) { M[y][x] = bit(cw[bi >>> 3], 7 - (bi & 7)); bi++; }
+      }
+    }
+    // pick the best mask
+    const rules = [(x, y) => (x + y) % 2 == 0, (x, y) => y % 2 == 0, (x, y) => x % 3 == 0, (x, y) => (x + y) % 3 == 0,
+      (x, y) => (Math.floor(x / 3) + Math.floor(y / 2)) % 2 == 0, (x, y) => x * y % 2 + x * y % 3 == 0,
+      (x, y) => (x * y % 2 + x * y % 3) % 2 == 0, (x, y) => ((x + y) % 2 + x * y % 3) % 2 == 0];
+    const apply = m => { for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (!F[y][x] && rules[m](x, y)) M[y][x] = !M[y][x]; };
+    const penalty = () => {
+      let p = 0, dark = 0;
+      const line = a => {
+        let run = 1;
+        for (let i = 1; i <= n; i++) { if (i < n && a[i] == a[i - 1]) run++; else { if (run >= 5) p += run - 2; run = 1; } }
+        const t = a.map(c => c ? 1 : 0).join("");
+        ["10111010000", "00001011101"].forEach(pt => { let k = -1; while ((k = t.indexOf(pt, k + 1)) >= 0) p += 40; });
+      };
+      for (let y = 0; y < n; y++) {
+        line(M[y]); line(M.map(r => r[y]));
+        for (let x = 0; x < n; x++) { if (M[y][x]) dark++; if (x && y && M[y][x] == M[y][x - 1] && M[y][x] == M[y - 1][x] && M[y][x] == M[y - 1][x - 1]) p += 3; }
+      }
+      return p + (Math.ceil(Math.abs(dark * 20 - n * n * 10) / (n * n)) - 1) * 10;
+    };
+    let best = 0, bp = Infinity;
+    for (let m = 0; m < 8; m++) { apply(m); fmt(m); const p = penalty(); if (p < bp) { bp = p; best = m; } apply(m); }
+    apply(best); fmt(best);
+    return M;
+  }
+
+  // ----- Share button: copy link + QR code (save / print) -----
+  (function () {
+    const shareBtn = document.createElement("button");
+    shareBtn.type = "button"; shareBtn.className = "music-btn share-btn"; shareBtn.textContent = "Share";
+    document.body.appendChild(shareBtn);
+
+    let modal = null;
+    const shareUrl = () => CONFIG.shareUrl || location.href.split("#")[0];
+    const qrSVG = m => {
+      const n = m.length; let d = "";
+      m.forEach((r, y) => { for (let x = 0; x < n;) { if (r[x]) { const s = x; while (x < n && r[x]) x++; d += `M${s + 4} ${y + 4}h${x - s}v1h${s - x}z`; } else x++; } });
+      return `<svg viewBox="0 0 ${n + 8} ${n + 8}" shape-rendering="crispEdges" role="img" aria-label="QR code"><rect width="100%" height="100%" fill="#fff"/><path d="${d}"/></svg>`;
+    };
+    const copy = t => (navigator.clipboard && window.isSecureContext)
+      ? navigator.clipboard.writeText(t).then(() => true, () => false)
+      : new Promise(res => {
+          const ta = document.createElement("textarea"); ta.value = t; ta.style.cssText = "position:fixed;opacity:0";
+          document.body.appendChild(ta); ta.select(); let ok = false;
+          try { ok = document.execCommand("copy"); } catch (e) {}
+          ta.remove(); res(ok);
+        });
+    const flash = (b, t) => { const o = b.textContent; b.textContent = t; setTimeout(() => { b.textContent = o; }, 1500); };
+    const savePNG = m => {
+      const n = m.length, s = Math.max(8, Math.ceil(1000 / (n + 8))), c = document.createElement("canvas");
+      c.width = c.height = (n + 8) * s;
+      const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.fillStyle = "#000";
+      m.forEach((r, y) => r.forEach((v, x) => { if (v) g.fillRect((x + 4) * s, (y + 4) * s, s, s); }));
+      const a = document.createElement("a"); a.href = c.toDataURL("image/png");
+      a.download = (CONFIG.name || "page").toLowerCase().replace(/[^a-z0-9]+/g, "-") + "-qr.png"; a.click();
+    };
+    const close = () => { if (modal) { modal.remove(); modal = null; shareBtn.focus(); } };
+
+    function open() {
+      const u = shareUrl(), m = makeQR(u);
+      modal = document.createElement("div"); modal.className = "share-modal";
+      modal.innerHTML = `<div class="share-panel" role="dialog" aria-modal="true" aria-label="Share this page">` +
+        `<button type="button" class="music-btn x" data-act="close" aria-label="Close">\u2715</button>` +
+        `<p class="section-title">Share this page</p>` +
+        `<div class="poster"><h3>${esc(CONFIG.name)}</h3>${m ? qrSVG(m) : ""}<p class="cap">${esc(CONFIG.shareCaption || "")}</p><p class="u">${esc(u)}</p></div>` +
+        (location.protocol === "file:" && !CONFIG.shareUrl ? `<p class="share-note">Set shareUrl in CONFIG once the page is online, so the QR opens the real link.</p>` : "") +
+        `<div class="share-row"><button type="button" class="music-btn primary" data-act="copy">Copy link</button>` +
+        (m ? `<button type="button" class="music-btn" data-act="save">Save QR</button><button type="button" class="music-btn" data-act="print">Print</button>` : "") +
+        `</div></div>`;
+      modal.addEventListener("click", e => {
+        const a = e.target.closest("[data-act]");
+        if (e.target === modal || (a && a.dataset.act === "close")) return close();
+        if (!a) return;
+        if (a.dataset.act === "copy") copy(u).then(ok => flash(a, ok ? "Copied!" : "Copy failed"));
+        else if (a.dataset.act === "save") savePNG(m);
+        else if (a.dataset.act === "print") { document.body.classList.add("qr-print"); window.print(); }
+      });
+      document.body.appendChild(modal);
+      modal.querySelector('[data-act="copy"]').focus();
+    }
+    shareBtn.addEventListener("click", open);
+    document.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
+    window.addEventListener("afterprint", () => document.body.classList.remove("qr-print"));
+  })();
+
+  // ----- Events from a Google Sheet (optional) -----
+  const csvRows = t => {
+    const rows = []; let r = [], f = "", q = false;
+    for (let i = 0; i < t.length; i++) {
+      const c = t[i];
+      if (q) { if (c == '"') { if (t[i + 1] == '"') { f += '"'; i++; } else q = false; } else f += c; }
+      else if (c == '"') q = true;
+      else if (c == ",") { r.push(f); f = ""; }
+      else if (c == "\n" || c == "\r") { if (c == "\r" && t[i + 1] == "\n") i++; r.push(f); f = ""; rows.push(r); r = []; }
+      else f += c;
+    }
+    if (f !== "" || r.length) { r.push(f); rows.push(r); }
+    return rows;
+  };
+  const p2 = n => String(n).padStart(2, "0");
+  const normDate = v => {
+    v = (v || "").trim();
+    const m = v.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (m) return `${m[1]}-${p2(m[2])}-${p2(m[3])}`;
+    const d = new Date(v);
+    return isNaN(d) ? "" : `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}`;
+  };
+  const normTime = v => {
+    const m = (v || "").trim().match(/^(\d{1,2}):(\d{2})(?::\d{2})?\s*([ap]m)?/i);
+    if (!m) return "";
+    let h = +m[1];
+    if (m[3]) { const pm = m[3].toLowerCase() == "pm"; if (pm && h < 12) h += 12; if (!pm && h == 12) h = 0; }
+    return `${p2(h)}:${m[2]}`;
+  };
+  const isNo = v => /^(false|no|0|hide|off)$/i.test((v || "").trim());
+  function sheetEvents(text) {
+    const rows = csvRows(text);
+    if (!rows.length) return null;
+    const h = rows[0].map(x => x.trim().toLowerCase());
+    if (h.indexOf("date") < 0 || h.indexOf("title") < 0) return null;   // not our sheet (e.g. a login page)
+    return rows.slice(1).map(r => {
+      const g = k => h.indexOf(k) < 0 ? "" : (r[h.indexOf(k)] || "").trim();
+      return { date: normDate(g("date")), time: normTime(g("time")), title: g("title"), type: g("type"), note: g("note"),
+               link: g("link"), duration: +g("duration") || 60, show: !isNo(g("show")), countdown: !isNo(g("countdown")) };
+    }).filter(e => e.date && e.title);
+  }
+  if (CONFIG.eventsSheet || CONFIG.eventsApi) {   // start from the last saved copy so old/sample events never flash
+    let cache = null; try { cache = JSON.parse(localStorage.getItem("events-cache") || "null"); } catch (e) {}
+    CONFIG.events = Array.isArray(cache) ? cache : [];
+  }
+  const normEv = o => ({ date: normDate(o.date), time: normTime(o.time), title: (o.title || "").trim(), type: (o.type || "").trim(),
+    note: (o.note || "").trim(), link: (o.link || "").trim(), duration: +o.duration || 60, show: !isNo(String(o.show === undefined ? "" : o.show)),
+    countdown: !isNo(String(o.countdown === undefined ? "" : o.countdown)) });
+  function applyEvents(ev) {
+    CONFIG.events = ev;
+    try { localStorage.setItem("events-cache", JSON.stringify(ev)); } catch (e) {}
+    render(true);
+  }
+  function loadSheet() {
+    if (CONFIG.eventsApi) {
+      fetch(CONFIG.eventsApi).then(r => r.json()).then(j => {
+        if (j && Array.isArray(j.events)) applyEvents(j.events.map(normEv).filter(e => e.date && e.title));
+      }).catch(() => {});
+      return;
+    }
+    if (!CONFIG.eventsSheet) return;
+    const u = CONFIG.eventsSheet + (CONFIG.eventsSheet.includes("?") ? "&" : "?") + "t=" + Date.now();
+    fetch(u).then(r => { if (!r.ok) throw 0; return r.text(); }).then(t => {
+      const ev = sheetEvents(t);
+      if (!ev) return;
+      applyEvents(ev);
+    }).catch(() => {});
+  }
+  setInterval(loadSheet, 300000);   // re-check every 5 minutes
+
+  // ----- On-page event editor (open with #edit, saves to your Google Sheet) -----
+  function openEditor() {
+    const draft = JSON.parse(JSON.stringify(CONFIG.events || []));
+    const now = new Date(), today = `${now.getFullYear()}-${p2(now.getMonth() + 1)}-${p2(now.getDate())}`;
+    let pin = "";
+    const m = document.createElement("div"); m.className = "share-modal";
+    const fld = (i, k, label, type, cls) => `<label class="ed-f ${cls || ""}"><span>${label}</span><input type="${type}" data-i="${i}" data-k="${k}" value="${esc(draft[i][k] === undefined ? "" : draft[i][k])}"></label>`;
+    const row = (e, i) => `<div class="ed-row">` + fld(i, "title", "Event name", "text", "w") + fld(i, "date", "Date", "date") + fld(i, "time", "Time (blank = all day)", "time") +
+      fld(i, "type", "Type", "text") + fld(i, "duration", "Minutes", "number") + fld(i, "link", "Meeting link (Teams)", "url", "w") + fld(i, "note", "Note", "text", "w") +
+      `<div class="ed-end"><label class="ed-c"><input type="checkbox" data-i="${i}" data-k="show"${e.show !== false ? " checked" : ""}> Show</label>` +
+      `<label class="ed-c"><input type="checkbox" data-i="${i}" data-k="countdown"${e.countdown !== false ? " checked" : ""}> Timer</label>` +
+      `<button type="button" class="music-btn" data-del="${i}">Delete</button></div></div>`;
+    const paint = () => {
+      m.innerHTML = `<div class="share-panel wide" role="dialog" aria-modal="true" aria-label="Edit events"><p class="section-title">Edit events</p>` +
+        `<label class="ed-f ed-pin" style="margin-bottom:12px"><span>Edit PIN</span><input type="password" data-pin autocomplete="off" value="${esc(pin)}"></label>` +
+        (draft.map(row).join("") || `<p class="ev-empty">No events yet.</p>`) +
+        `<div class="share-row"><button type="button" class="music-btn" data-add>+ Add event</button><button type="button" class="music-btn primary" data-save>Save</button><button type="button" class="music-btn" data-cancel>Cancel</button></div>` +
+        `<p class="ed-status" id="ed-status"></p></div>`;
+    };
+    const say = t => { const el = m.querySelector("#ed-status"); if (el) el.textContent = t; };
+    m.addEventListener("input", e => {
+      const t = e.target;
+      if (t.hasAttribute("data-pin")) pin = t.value;
+      else if (t.dataset.k) draft[+t.dataset.i][t.dataset.k] = t.type === "checkbox" ? t.checked : t.value;
+    });
+    m.addEventListener("click", e => {
+      const b = e.target.closest("button");
+      if (e.target === m || (b && b.hasAttribute("data-cancel"))) return m.remove();
+      if (!b) return;
+      if (b.hasAttribute("data-add")) { draft.push({ date: today, time: "", title: "New event", type: "Meeting", note: "", link: "", duration: 60, show: true, countdown: true }); const y = m.querySelector(".share-panel").scrollTop; paint(); m.querySelector(".share-panel").scrollTop = y + 9999; }
+      else if (b.dataset.del !== undefined) { if (confirm("Delete this event?")) { draft.splice(+b.dataset.del, 1); const y = m.querySelector(".share-panel").scrollTop; paint(); m.querySelector(".share-panel").scrollTop = y; } }
+      else if (b.hasAttribute("data-save")) {
+        if (draft.some(x => !String(x.title).trim() || !x.date)) return say("Every event needs a name and a date.");
+        if (!pin) return say("Enter the edit PIN.");
+        draft.sort((a, b2) => (a.date + (a.time || "")).localeCompare(b2.date + (b2.time || "")));
+        say("Saving...");
+        const out = draft.map(x => ({ ...x, duration: +x.duration || 60, show: x.show === false ? "FALSE" : "TRUE", countdown: x.countdown === false ? "FALSE" : "TRUE" }));
+        fetch(CONFIG.eventsApi, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ pin, events: out }) })
+          .then(r => r.json()).then(r => {
+            if (!r.ok) return say(r.error === "pin" ? "Wrong PIN." : "Could not save.");
+            applyEvents(draft.map(x => ({ ...x, duration: +x.duration || 60 })));
+            m.remove();
+          }).catch(() => say("Could not reach the sheet. Check eventsApi."));
+      }
+    });
+    paint();
+    document.body.appendChild(m);
+  }
+  function checkEdit() {
+    if (location.hash !== "#edit") return;
+    history.replaceState(null, "", location.pathname + location.search);
+    if (CONFIG.eventsApi) openEditor();
+  }
+
+  window.addEventListener("hashchange", () => { render(); checkEdit(); });
+  render();
+  loadSheet();
+  checkEdit();
+})();
+</script>
+</body>
+</html>
