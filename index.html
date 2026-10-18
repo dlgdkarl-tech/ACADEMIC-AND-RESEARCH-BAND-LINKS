@@ -547,13 +547,12 @@ const CONFIG = {
     tick();
   });
 
-  // ----- Add to calendar (.ics file or Google Calendar) -----
+  // ----- Add to Google Calendar (the meeting link goes inside the calendar entry) -----
   const okLink = u => /^https?:\/\//i.test(u || "");
   function evActions(e) {
     return `<div class="ev-actions">` +
       (okLink(e.link) ? `<a class="music-btn primary" href="${esc(e.link)}" target="_blank" rel="noopener">Join Teams</a>` : "") +
-      `<button type="button" class="music-btn" data-cal="ics" data-i="${e.i}">Add to Calendar</button>` +
-      `<button type="button" class="music-btn" data-cal="google" data-i="${e.i}">Google</button></div>`;
+      `<button type="button" class="music-btn" data-cal="google" data-i="${e.i}">Add to Google Calendar</button></div>`;
   }
   function calInfo(e) {
     const p2 = n => String(n).padStart(2, "0");
@@ -567,32 +566,17 @@ const CONFIG = {
       s: allDay ? fmt(e.start) : fmtT(e.start), e: allDay ? fmt(next) : fmtT(end), allDay
     };
   }
-  function addToCalendar(e, kind) {
+  function addToCalendar(e) {
     const c = calInfo(e);
-    if (kind === "google") {
-      const q = new URLSearchParams({ action: "TEMPLATE", text: c.title, dates: `${c.s}/${c.e}`, details: c.desc, location: c.loc });
-      window.open("https://calendar.google.com/calendar/render?" + q.toString(), "_blank", "noopener");
-      return;
-    }
-    const t = x => String(x).replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
-    const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
-    const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Radio Engineering Circle//Events//EN", "BEGIN:VEVENT",
-      `UID:${c.s}-${e.i}@events`, `DTSTAMP:${stamp}`,
-      c.allDay ? `DTSTART;VALUE=DATE:${c.s}` : `DTSTART:${c.s}`, c.allDay ? `DTEND;VALUE=DATE:${c.e}` : `DTEND:${c.e}`,
-      `SUMMARY:${t(c.title)}`, c.desc && `DESCRIPTION:${t(c.desc)}`, c.loc && `LOCATION:${t(c.loc)}`, c.loc && `URL:${c.loc}`,
-      "BEGIN:VALARM", "TRIGGER:-PT30M", "ACTION:DISPLAY", `DESCRIPTION:${t(e.title)}`, "END:VALARM", "END:VEVENT", "END:VCALENDAR"].filter(Boolean);
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([lines.join("\r\n")], { type: "text/calendar;charset=utf-8" }));
-    a.download = (e.title || "event").toLowerCase().replace(/[^a-z0-9]+/g, "-") + ".ics";
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    const q = new URLSearchParams({ action: "TEMPLATE", text: c.title, dates: `${c.s}/${c.e}`, details: c.desc, location: c.loc, ctz: "Asia/Manila" });
+    window.open("https://calendar.google.com/calendar/render?" + q.toString(), "_blank", "noopener");
   }
   document.addEventListener("click", ev => {
     const b = ev.target.closest && ev.target.closest("[data-cal]");
     const e = b && (CONFIG.events || [])[+b.dataset.i];
     if (!e) return;
     const [y, m, d] = e.date.split("-").map(Number), [hh, mm] = (e.time || "00:00").split(":").map(Number);
-    addToCalendar({ ...e, start: new Date(y, m - 1, d, hh || 0, mm || 0), i: +b.dataset.i }, b.dataset.cal);
+    addToCalendar({ ...e, start: new Date(y, m - 1, d, hh || 0, mm || 0), i: +b.dataset.i });
   });
 
   function eventsHTML(full) {
@@ -741,29 +725,66 @@ const CONFIG = {
     audio.play().then(label).catch(() => { if (CONFIG.enterScreen) showGate(); });
   }
 
-  // ----- Sound effects (made in the browser, no audio files needed) -----
+  // ----- Sound effects (works on phones: sounds are preloaded and played with Web Audio) -----
   if (CONFIG.sfx) {
+    const AC = window.AudioContext || window.webkitAudioContext;
     let ctx = null;
+    const getCtx = () => { if (!ctx && AC) { try { ctx = new AC(); } catch (e) {} } return ctx; };
+    const bufs = {}, tags = {};   // decoded sounds, and plain <audio> fallbacks
+
+    // Phones keep audio locked until the visitor touches the page: unlock on the first touch/tap/key
+    const unlock = () => {
+      const c = getCtx();
+      if (c) {
+        if (c.state !== "running") c.resume().catch(() => {});
+        try { const s = c.createBufferSource(); s.buffer = c.createBuffer(1, 1, 22050); s.connect(c.destination); s.start(0); } catch (e) {}
+      }
+      Object.keys(tags).forEach(k => { const a = tags[k]; a.muted = true; a.play().then(() => { a.pause(); a.currentTime = 0; a.muted = false; }).catch(() => { a.muted = false; }); });
+      if (c && c.state === "running") ["pointerdown", "touchstart", "touchend", "click", "keydown"].forEach(t => document.removeEventListener(t, unlock, true));
+    };
+    ["pointerdown", "touchstart", "touchend", "click", "keydown"].forEach(t => document.addEventListener(t, unlock, true));
+
+    // Load each sound file once, ahead of time, so it plays instantly when tapped
+    const preload = src => {
+      if (!src || bufs[src] || tags[src]) return;
+      const a = new Audio(src); a.preload = "auto"; tags[src] = a;   // fallback if decoding is not possible
+      const c = getCtx();
+      if (!c || !window.fetch) return;
+      fetch(src).then(r => { if (!r.ok) throw 0; return r.arrayBuffer(); }).then(ab => new Promise((ok, no) => {
+        const p = c.decodeAudioData(ab, ok, no); if (p && p.then) p.then(ok, no);   // old Safari uses the callback form
+      })).then(b => { bufs[src] = b; }).catch(() => {});
+    };
+    preload(CONFIG.clickSound); preload(CONFIG.hoverSound);
+
     const blip = (freq, dur, vol) => {
       if (muted) return;
       try {
-        ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
-        if (ctx.state === "suspended") ctx.resume();
-        const o = ctx.createOscillator(), g = ctx.createGain();
+        const c = getCtx(); if (!c) return;
+        if (c.state !== "running") c.resume().catch(() => {});
+        const o = c.createOscillator(), g = c.createGain();
         o.type = "square";                       // retro 8-bit sound
-        o.frequency.setValueAtTime(freq, ctx.currentTime);
-        o.frequency.exponentialRampToValueAtTime(freq * 1.5, ctx.currentTime + dur);
-        g.gain.setValueAtTime(vol, ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
-        o.connect(g); g.connect(ctx.destination);
-        o.start(); o.stop(ctx.currentTime + dur);
+        o.frequency.setValueAtTime(freq, c.currentTime);
+        o.frequency.exponentialRampToValueAtTime(freq * 1.5, c.currentTime + dur);
+        g.gain.setValueAtTime(vol, c.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + dur);
+        o.connect(g); g.connect(c.destination);
+        o.start(); o.stop(c.currentTime + dur);
       } catch (e) {}
     };
-    const play = src => {
+    const play = (src, fallbackBlip) => {
       if (muted) return;
-      const a = new Audio(src);
-      a.volume = 0.7;
-      a.play().catch(() => {});
+      const c = getCtx();
+      if (c && bufs[src]) {
+        try {
+          if (c.state !== "running") c.resume().catch(() => {});
+          const s = c.createBufferSource(), g = c.createGain();
+          s.buffer = bufs[src]; g.gain.value = 0.7; s.connect(g); g.connect(c.destination); s.start(0);
+          return;
+        } catch (e) {}
+      }
+      const t = tags[src];
+      if (t) { try { const a = t.cloneNode(); a.volume = 0.7; a.play().catch(() => { if (fallbackBlip) fallbackBlip(); }); return; } catch (e) {} }
+      if (fallbackBlip) fallbackBlip();
     };
     let lastHover = null;
     document.addEventListener("pointerover", e => {
@@ -777,9 +798,9 @@ const CONFIG = {
     document.addEventListener("click", e => {
       const el = e.target.closest && e.target.closest(".link, .music-btn");
       if (!el) return;
-      if (CONFIG.clickSound) play(CONFIG.clickSound);                 // your own click file
-      else if (el.classList.contains("back")) blip(330, 0.12, 0.06);  // built-in: back = lower blip
-      else blip(880, 0.1, 0.06);                                      // built-in: click = higher blip
+      const beep = () => el.classList.contains("back") ? blip(330, 0.12, 0.06) : blip(880, 0.1, 0.06);
+      if (CONFIG.clickSound) play(CONFIG.clickSound, beep);   // your own click file (built-in beep if it can't play)
+      else beep();
     });
   }
 
